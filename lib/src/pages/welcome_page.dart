@@ -6,20 +6,36 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Text("Welcome to Vidly"),
-            ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/register'),
-                child: const Text("Register")),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              child: OutlinedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/login'),
-                  child: const Text("Login")),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: const Text(
+                      "Welcome to Vidly",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/register'),
+                    child: const Text("Register")),
+                Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  child: OutlinedButton(
+                      onPressed: () => Navigator.pushNamed(context, '/login'),
+                      child: const Text("Login")),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

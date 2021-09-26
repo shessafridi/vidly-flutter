@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vidly/src/pages/home_page.dart';
+import 'package:vidly/src/pages/loading_page.dart';
 import 'package:vidly/src/pages/login_page.dart';
 import 'package:vidly/src/pages/register_page.dart';
 import 'package:vidly/src/pages/unknown_page.dart';
@@ -12,6 +13,8 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
+        return MaterialPageRoute(builder: (_) => const LoadingPage());
+      case '/welcome':
         return MaterialPageRoute(builder: (_) => const WelcomePage());
       case '/home':
         return MaterialPageRoute(builder: (_) => const HomePage());
