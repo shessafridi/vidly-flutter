@@ -1,97 +1,105 @@
 import 'package:flutter/material.dart';
-import 'package:vidly/src/api/auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vidly/src/services/auth_service.dart';
+import 'package:vidly/src/services/navigation_service.dart';
 import 'package:vidly/src/validators/validators.dart';
+import 'package:vidly/src/widgets/form_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  var _busy = false;
-  var _email = '';
-  var _password = '';
+  final _email = TextEditingController();
+  final _password = TextEditingController();
 
   _handleSubmit(BuildContext context) async {
+    final auth = context.read(authServiceProvider);
+    final router = context.read(navigationServiceProvider);
+
     final isValid = _formKey.currentState!.validate();
-    if (!isValid || _busy) return;
+    if (!isValid || auth.isLoading) return;
     _formKey.currentState?.save();
 
-    _busy = true;
-
-    try {
-      var token = await login(_email, _password);
-      authenticate(context, token);
-    } finally {
-      _busy = false;
+    await auth.signIn(_email.text, _password.text);
+    if (auth.currentUser != null) {
+      router.fullyReplacyBy('/home');
     }
   }
 
   @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Center(
-                child: Text(
-                  "Welcome back",
-                  style: TextStyle(fontSize: 20),
+    return Consumer(builder: (context, watch, child) {
+      final auth = watch(authServiceProvider);
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Login"),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Center(
+                  child: Text(
+                    "Welcome back",
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                onSaved: (email) {
-                  _email = email ?? '';
-                },
-                validator: emailValidator,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Enter your email"),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-                onSaved: (password) {
-                  _password = password ?? '';
-                },
-                validator: passwordValidator,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Enter your password"),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => _handleSubmit(context),
-                    child: const Text("Login"),
-                  ))
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                AppTextFormField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: emailValidator,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AppTextFormField(
+                  controller: _password,
+                  keyboardType: TextInputType.visiblePassword,
+                  validator: passwordValidator,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (auth.errorMessage != null)
+                  Text(
+                    auth.errorMessage ?? '',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed:
+                          auth.isLoading ? null : () => _handleSubmit(context),
+                      child: Text(auth.isLoading ? "Please wait..." : "Login"),
+                    ))
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -1,16 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vidly/src/services/auth_service.dart';
+import 'package:vidly/src/services/navigation_service.dart';
 
 class LoadingPage extends StatelessWidget {
   const LoadingPage({Key? key}) : super(key: key);
 
   _checkAuthentication(BuildContext context) async {
-    var authenticated = await isAuthenticated();
+    final router = context.read(navigationServiceProvider);
+    var auth = context.read(authServiceProvider);
+    var authenticated = await auth.checkAuth();
     if (authenticated) {
-      onAuthenticated(context);
+      router.fullyReplacyBy('/home');
     } else {
-      Navigator.pushReplacementNamed(context, '/welcome');
+      router.fullyReplacyBy('/welcome');
     }
   }
 

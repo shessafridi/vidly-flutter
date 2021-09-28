@@ -1,60 +1,72 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:vidly/src/config/config.dart';
 import 'package:vidly/src/models/movie.dart';
 import 'package:vidly/src/services/auth_service.dart';
 
-const _endpoint = '/movies';
-const _headers = {'Content-Type': 'application/json'};
+var movieApiProvider = Provider((ref) {
+  var authService = ref.watch(authServiceProvider);
+  return MoviesApi(authService);
+});
 
-Future<List<Movie>> getMovies() async {
-  var response =
-      await http.get(Uri.parse(apiUrl + _endpoint), headers: _headers);
-  if (response.statusCode != 200) return Future.error(response);
+class MoviesApi {
+  AuthService auth;
 
-  var moviesList = (json.decode(response.body) as List)
-      .map((e) => Movie.fromJson(e))
-      .toList();
+  MoviesApi(this.auth);
 
-  return moviesList;
-}
+  final _endpoint = '/movies';
+  final _headers = {'Content-Type': 'application/json'};
 
-Future<Map<String, String>> _getTokenHeader() async {
-  var token = await getToken();
+  Future<List<Movie>> getMovies() async {
+    var response =
+        await http.get(Uri.parse(apiUrl + _endpoint), headers: _headers);
+    if (response.statusCode != 200) return Future.error(response);
 
-  var authHeaders = {'Authentication': "Bearer $token"};
-  authHeaders.addAll(_headers);
+    var moviesList = (json.decode(response.body) as List)
+        .map((e) => Movie.fromJson(e))
+        .toList();
 
-  return authHeaders;
-}
+    return moviesList;
+  }
 
-Future<Movie> getMovie(String id) async {
-  var headers = await _getTokenHeader();
+  Future<Map<String, String>> _getTokenHeader() async {
+    var token = auth.token;
 
-  var response =
-      await http.get(Uri.parse(apiUrl + _endpoint + '/$id'), headers: headers);
-  if (response.statusCode != 200) return Future.error(response);
+    var authHeaders = {'Authentication': "Bearer $token"};
+    authHeaders.addAll(_headers);
 
-  return Movie.fromJson(response.body);
-}
+    return authHeaders;
+  }
 
-deleteMovie(String id) async {
-  var headers = await _getTokenHeader();
+  Future<Movie> getMovie(String id) async {
+    var headers = await _getTokenHeader();
 
-  var response = await http.delete(Uri.parse(apiUrl + _endpoint + '/$id'),
-      headers: headers);
-  if (response.statusCode != 200) return Future.error(response);
+    var response = await http.get(Uri.parse(apiUrl + _endpoint + '/$id'),
+        headers: headers);
+    if (response.statusCode != 200) return Future.error(response);
 
-  return Movie.fromJson(response.body);
-}
+    return Movie.fromJson(response.body);
+  }
 
-updateMovie(Movie movie) async {
-  var headers = await _getTokenHeader();
+  deleteMovie(String id) async {
+    var headers = await _getTokenHeader();
 
-  var response = await http.put(Uri.parse(apiUrl + _endpoint + '/${movie.id}'),
-      headers: headers);
-  if (response.statusCode != 200) return Future.error(response);
+    var response = await http.delete(Uri.parse(apiUrl + _endpoint + '/$id'),
+        headers: headers);
+    if (response.statusCode != 200) return Future.error(response);
 
-  return Movie.fromJson(response.body);
+    return Movie.fromJson(response.body);
+  }
+
+  updateMovie(Movie movie) async {
+    var headers = await _getTokenHeader();
+
+    var response = await http
+        .put(Uri.parse(apiUrl + _endpoint + '/${movie.id}'), headers: headers);
+    if (response.statusCode != 200) return Future.error(response);
+
+    return Movie.fromJson(response.body);
+  }
 }
