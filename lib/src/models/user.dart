@@ -23,8 +23,8 @@ class User {
         id: json["_id"],
         name: json["name"],
         email: json["email"],
-        isAdmin: json["isAdmin"],
-        iat: json["iat"],
+        isAdmin: json["isAdmin"] ?? false,
+        iat: json["iat"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {

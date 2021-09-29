@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:vidly/src/api/auth.dart';
+import 'package:vidly/src/models/errors/bad_request_error.dart';
 import 'package:vidly/src/models/errors/invalid_credentials_error.dart';
 import 'package:vidly/src/models/errors/unautorized_error.dart';
 import 'package:vidly/src/models/user.dart';
@@ -50,6 +51,23 @@ class AuthService with ChangeNotifier {
       }
     }
     router.fullyReplacyBy('/welcome');
+  }
+
+  Future<void> signUp(String email, String name, String password) async {
+    isLoading = true;
+    errorMessage = null;
+
+    notifyListeners();
+
+    try {
+      await auth.register(email, name, password);
+    } on BadRequestError catch (e) {
+      errorMessage = e.toString();
+      rethrow;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> signIn(String email, String password) async {

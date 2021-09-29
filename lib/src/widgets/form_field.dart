@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 class AppTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final String? label;
+  final bool? obscureText;
   final TextInputType? keyboardType;
   const AppTextFormField(
-      {this.controller, this.validator, this.keyboardType, Key? key})
+      {this.controller,
+      this.validator,
+      this.keyboardType,
+      this.label,
+      this.obscureText,
+      Key? key})
       : super(key: key);
 
   @override
@@ -15,8 +22,11 @@ class AppTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       controller: controller,
       validator: validator,
-      decoration: const InputDecoration(
-          border: OutlineInputBorder(), labelText: "Enter your email"),
+      obscureText: obscureText ?? false,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: label,
+      ),
     );
   }
 }

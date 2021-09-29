@@ -1,0 +1,1 @@
+class AlreadyRegisteredError implements Exception {}
