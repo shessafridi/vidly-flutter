@@ -5,10 +5,10 @@ final navigationServiceProvider = Provider((ref) => NavigationService());
 
 class NavigationService {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  Future<void> navigateTo(String routeName) {
+  Future<void> navigateTo(String routeName, Object? args) {
     if (navigatorKey.currentState == null) return Future.sync(() => null);
 
-    return navigatorKey.currentState!.pushNamed(routeName);
+    return navigatorKey.currentState!.pushNamed(routeName, arguments: args);
   }
 
   Future<void> fullyReplacyBy(String routeName) {

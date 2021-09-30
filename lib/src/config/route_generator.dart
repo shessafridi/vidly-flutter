@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vidly/src/models/movie.dart';
 import 'package:vidly/src/pages/home_page.dart';
 import 'package:vidly/src/pages/loading_page.dart';
 import 'package:vidly/src/pages/login_page.dart';
+import 'package:vidly/src/pages/movie_form.dart';
 import 'package:vidly/src/pages/register_page.dart';
 import 'package:vidly/src/pages/unknown_page.dart';
 import 'package:vidly/src/pages/welcome_page.dart';
@@ -23,8 +25,8 @@ class RouteGenerator {
       case '/register':
         return MaterialPageRoute(builder: (_) => const RegisterPage());
       case '/movieForm':
-        if (args is String) {
-          return MaterialPageRoute(builder: (_) => const RegisterPage());
+        if (args is Movie) {
+          return MaterialPageRoute(builder: (_) => MovieFormPage(movie: args));
         } else {
           return MaterialPageRoute(builder: (_) => const UnknownPage());
         }
