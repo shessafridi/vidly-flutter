@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/all.dart';
-import 'package:flutter_riverpod/src/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:vidly/src/services/auth_service.dart';
 import 'package:vidly/src/services/navigation_service.dart';

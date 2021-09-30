@@ -15,7 +15,7 @@ class Movie {
   String title;
   Genre genre;
   int numberInStock;
-  int dailyRentalRate;
+  num dailyRentalRate;
 
   factory Movie.fromJson(String str) => Movie.fromMap(json.decode(str));
 

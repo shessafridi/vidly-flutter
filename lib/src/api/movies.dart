@@ -6,9 +6,14 @@ import 'package:vidly/src/config/config.dart';
 import 'package:vidly/src/models/movie.dart';
 import 'package:vidly/src/services/auth_service.dart';
 
-var movieApiProvider = Provider((ref) {
-  var authService = ref.watch(authServiceProvider);
+final movieApiProvider = Provider((ref) {
+  final authService = ref.watch(authServiceProvider);
   return MoviesApi(authService);
+});
+
+final movieListProvider = FutureProvider((ref) async {
+  final movieApi = ref.watch(movieApiProvider);
+  return await movieApi.getMovies();
 });
 
 class MoviesApi {
@@ -24,9 +29,9 @@ class MoviesApi {
         await http.get(Uri.parse(apiUrl + _endpoint), headers: _headers);
     if (response.statusCode != 200) return Future.error(response);
 
-    var moviesList = (json.decode(response.body) as List)
-        .map((e) => Movie.fromJson(e))
-        .toList();
+    List<dynamic> list = jsonDecode(response.body);
+
+    var moviesList = list.map((e) => Movie.fromMap(e)).toList();
 
     return moviesList;
   }
