@@ -9,7 +9,7 @@ class MovieFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Movie"),
+        title: Text(movie.title),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
