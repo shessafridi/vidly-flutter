@@ -114,7 +114,7 @@ class AuthService with ChangeNotifier {
       this.token = token;
       var payload = Jwt.parseJwt(token);
       return User.fromMap(payload);
-    } on UnauthorizedError {
+    } on Exception {
       return null;
     }
   }
