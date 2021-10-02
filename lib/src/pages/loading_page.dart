@@ -42,7 +42,7 @@ class _LoadingPageState extends State<LoadingPage> {
     _checkAuthentication(context);
     return const Scaffold(
       body: RiveAnimation.asset(
-        'animations/loader.riv',
+        'assets/animations/loader.riv',
       ),
     );
   }
