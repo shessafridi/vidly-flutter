@@ -40,7 +40,7 @@ class AuthService with ChangeNotifier {
     return true;
   }
 
-  logout(BuildContext context) async {
+  logout() async {
     if (kIsWeb) {
       var prefs = await SharedPreferences.getInstance();
       prefs.remove(_tokenKeyName);

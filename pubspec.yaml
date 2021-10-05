@@ -40,6 +40,7 @@ dependencies:
   jwt_decode: ^0.3.1
   flutter_riverpod: ^0.14.0+3
   rive: ^0.7.28
+  google_fonts: ^2.1.0
 
 dev_dependencies:
   flutter_test:
