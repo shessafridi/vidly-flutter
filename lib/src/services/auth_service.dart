@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +43,7 @@ class AuthService with ChangeNotifier {
   }
 
   logout() async {
-    if (kIsWeb) {
+    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       var prefs = await SharedPreferences.getInstance();
       prefs.remove(_tokenKeyName);
     } else {
@@ -78,7 +80,10 @@ class AuthService with ChangeNotifier {
     try {
       var token = await auth.login(email, password);
 
-      if (kIsWeb) {
+      if (kIsWeb ||
+          Platform.isWindows ||
+          Platform.isMacOS ||
+          Platform.isLinux) {
         var prefs = await SharedPreferences.getInstance();
         prefs.setString(_tokenKeyName, token);
       } else {
@@ -121,7 +126,7 @@ class AuthService with ChangeNotifier {
 
   Future<String> getToken() async {
     String? token;
-    if (kIsWeb) {
+    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       var prefs = await SharedPreferences.getInstance();
       token = prefs.getString(_tokenKeyName);
     } else {
